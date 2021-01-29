@@ -2,11 +2,13 @@
 Luci for JD dailybonus Script for Openwrt  
 一个运行在openwrt下的京东签到插件。
 
-### Update Log 2020-07-16  
+### Update Log 2021-01-25  v1.0.3
 
-#### Updates
+#### Updates 
 
-- UPDATE: 修正部分cookie无法更新到脚本的问题。
+- UPD: 大量代码重构，去除lua-request 使用wget实现网络请求节省大量空间和依赖（感谢@Promix953的更新）
+- FIX: 修复当使用master版本时 提交信息出错的问题
+- FIX: 修复部分文件翻译
 
 
 详情见[具体日志](./relnotes.txt)。 
@@ -21,13 +23,9 @@ Luci for JD dailybonus Script for Openwrt
 ```
 cd lede/package/lean/  
 
-git clone https://github.com/jerrykuku/node-request.git  #git node-request 依赖
-
 git clone https://github.com/jerrykuku/luci-app-jd-dailybonus.git  
 
 make menuconfig #Check LUCI->Applications->luci-app-jd-dailybonus
-
-make package/lean/node-request/compile V=s  #单独编译node-request 依赖  
 
 make package/lean/luci-app-jd-dailybonus/compile V=s  #单独编译luci-app-jd-dailybonus  
 
@@ -40,23 +38,22 @@ make -j1 V=s #编译固件
 
 ⚠️安装步骤[重要]⚠️  
 
+目前插件已经不再需要node-request 依赖，如果之前有安装的，请到软件包进行卸载。
+但是node 是必要依赖，请必须确认已经安装Node。
 1.自行安装Node [命令: opkg update && opkg install node]
   (如果已经安装node版本的网易云插件则可以跳过)   
   
-2.一些必要的依赖 wget 和 coreutils-nohup [命令：opkg install wget coreutils-nohup]
-  
-3.根据自己的系统架构选择合适的node-request.ipk进行安装。  
-  [node-request下载](https://github.com/jerrykuku/luci-app-jd-dailybonus/releases/tag/0.7.6) 
-  - Pi[H5] 系列  : aarch64_cortex-a53
-  - N1 贝壳云    : aarch64_generic
-  - 树莓派4      : aarch64_cortex-a72
-  - MT7621       : mipsel_24kc
-  - x86          : x86_64
-  - 全志 H3       : arm_cortex-a7_neon-vfpv4.ipk
-  - 其他         : 参照上面方法自行编译
-  - 如果找不到合适的,也可以通过ssh: opkg install node-npm  然后 npm install request -g 进行安装
-
-4.安装luci-app-jd-dailybonus
+2.需要安装以下依赖：
+```
+opkg update  
+opkg install node wget lua
+```
+如果更新ipk后无法获取二维码  
+```
+#登录ssh后执行
+rm -rf /tmp/luci-indexcache /tmp/luci-modulecache/*
+```
+3.安装luci-app-jd-dailybonus
 
 ### 感谢
 
@@ -64,5 +61,10 @@ make -j1 V=s #编译固件
 
 ### 我的其它项目
 Argon theme ：https://github.com/jerrykuku/luci-theme-argon  
+Argon theme config  ：https://github.com/jerrykuku/luci-app-argon-config  
 Hello World ：https://github.com/jerrykuku/luci-app-vssr  
 openwrt-nanopi-r1s-h5 ： https://github.com/jerrykuku/openwrt-nanopi-r1s-h5  
+
+### 支持我
+如果你觉得我做的不错，可以赞赏一下。
+<img src="https://raw.githubusercontent.com/jerrykuku/staff/master/photo_2019-12-22_11-40-20.jpg" width="300" height="300">
